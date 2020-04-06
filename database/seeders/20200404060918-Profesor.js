@@ -14,24 +14,9 @@ module.exports = {
     */
 
     return queryInterface.bulkInsert('Profesor', [
-    {
-      nombre: 'John Doe',
-      correo: 'john@test.com',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      nombre: 'Dave Poe',
-      correo: 'dave@test.com',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      nombre: 'Jessica Amarth',
-      correo: 'jessica@test.com',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
+    { nombre: 'John Doe', correo: 'john@test.com', createdAt: new Date(), updatedAt: new Date()},
+    { nombre: 'Dave Poe', correo: 'dave@test.com', createdAt: new Date(), updatedAt: new Date()},
+    { nombre: 'Jessica Amarth', correo: 'jessica@test.com', createdAt: new Date(), updatedAt: new Date()}
     ], {});
   },
 
