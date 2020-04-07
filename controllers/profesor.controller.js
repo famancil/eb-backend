@@ -42,8 +42,19 @@ const getProfesorById = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-      const profesor = await models.Profesor.create(req.body);
-      return res.status(201).json({ profesor });
+        let correo = req.body.correo;
+        
+        await models.Profesor.findOne({where: {correo: correo}})
+          .then(async function (profesor) {
+            
+              if (profesor) {
+                return res.status(422).json('Correo ya existe, intente con otro.');
+              }
+              else {
+                const profesor = await models.Profesor.create(req.body);
+                return res.status(201).json({ profesor });
+              }
+          });
     } catch (error) {
       if(error.name === "SequelizeForeignKeyConstraintError")
         return res.status(400).json({ error: error.message });
@@ -53,16 +64,29 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-      const { profesorId } = req.params;
-      const [_profesor] = await models.Profesor.update(req.body, {
-        where: { id: profesorId }
-      });
-      if (_profesor) {
-        const profesor = await models.Profesor.findOne({ where: { id: profesorId } });
-        return res.status(200).json({ profesor });
-      }
-      throw new Error("Profesor no encontrado");
+      let profesorId = req.params.profesorId;
+      let correo = req.body.correo;
+      
+      await models.Profesor.findOne({where: {correo: correo}})
+          .then(async function (profesor) {
+              if (profesor && profesor.id != profesorId) {
+                return res.status(422).json('Correo ya existe, intente con otro.');
+              }
+              else {
+                const { profesorId } = req.params;
+                const [_profesor] = await models.Profesor.update(req.body, {
+                  where: { id: profesorId }
+                });
+                if (_profesor) {
+                  const profesor = await models.Profesor.findOne({ where: { id: profesorId } });
+                  return res.status(200).json({ profesor });
+                }
+                throw new Error("Profesor no encontrado");
+              }
+          });
     } catch (error) {
+      if(error.name === "SequelizeValidationError")
+        return res.status(400).json({ error: error.message });
       if(error.name === "SequelizeForeignKeyConstraintError")
         return res.status(400).json({ error: error.message });
       return res.status(500).send(error.message);

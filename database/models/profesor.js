@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         isEmail : {
           args: true,
           msg: 'Correo invalido, revise nuevamente'
-        },
-        isUnique: function (value, next) {
+        }
+        /*isUnique: function (value, next) {
           var self = this;
           Profesor.findOne({where: {correo: value}})
           .then(function (user) {
@@ -21,13 +21,10 @@ module.exports = (sequelize, DataTypes) => {
           })
           .catch(function (err) {
               return next(err);
-          });
+          });*/
         }
-      },
-    
-
-    }
-  }, {freezeTableName: true});
+      },  
+    }, {freezeTableName: true});
   Profesor.associate = function(models) {
     // associations can be defined here
     Profesor.hasMany(models.Curso, {
