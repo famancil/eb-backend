@@ -106,8 +106,24 @@ const getAllPeorProm= async (req, res) => {
 
 const create = async (req, res) => {
     try {
-      const prueba = await models.Prueba.create(req.body);
-      return res.status(201).json({ prueba });
+      let nombre = req.body.nombre;
+      let cursoId = req.body.cursoId;
+      let alumnoId = req.body.alumnoId;
+      
+      await models.Prueba.findOne({where: models.Sequelize.and(
+        {nombre: nombre},
+        {cursoId: cursoId},
+        {alumnoId: alumnoId}
+      )})
+        .then(async function (prueba) {
+          if (prueba) {
+            return res.status(422).json('Prueba ya realizada, ingrese otra.');
+          }
+          else {
+            const prueba = await models.Prueba.create(req.body);
+            return res.status(201).json({ prueba });
+          }
+        });
     } catch (error) {
       if(error.name === "SequelizeForeignKeyConstraintError")
         return res.status(400).json({ error: error.message });
@@ -117,16 +133,36 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-      const { pruebaId } = req.params;
-      const [_prueba] = await models.Prueba.update(req.body, {
-        where: { id: pruebaId }
+
+      let pruebaId = req.params.pruebaId;
+      let nombre = req.body.nombre;
+      let nota = req.body.nota;
+      let cursoId = req.body.cursoId;
+      let alumnoId = req.body.alumnoId;
+      
+      await models.Prueba.findOne({where: models.Sequelize.and(
+        {nombre: nombre},
+        {cursoId: cursoId},
+        {alumnoId: alumnoId}
+        )})
+        .then(async function (prueba) {          
+          if (prueba && prueba.nota === nota) {
+              return res.status(422).json('Prueba ya realizada, ingrese otra.');
+          }
+          else {
+            const [_prueba] = await models.Prueba.update(req.body, {
+              where: { id: pruebaId }
+            });
+            if (_prueba) {
+              const prueba = await models.Prueba.findOne({ where: { id: pruebaId } });
+              return res.status(200).json({ prueba });
+            }
+            throw new Error("Prueba no encontrado");
+          }
       });
-      if (_prueba) {
-        const prueba = await models.Prueba.findOne({ where: { id: pruebaId } });
-        return res.status(200).json({ prueba });
-      }
-      throw new Error("Prueba no encontrado");
     } catch (error) {
+      if(error.name === "SequelizeValidationError")
+        return res.status(400).json({ error: error.message });
       if(error.name === "SequelizeForeignKeyConstraintError")
         return res.status(400).json({ error: error.message });
       return res.status(500).send(error.message);

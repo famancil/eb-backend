@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Alumno = sequelize.define('Alumno', {
     nombre: {
       type: DataTypes.STRING,
-      validate:{
+      /*validate:{
         isUnique: function (value, next) {
           var self = this;
           Alumno.findOne({where: {nombre: value}})
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
               return next(err);
           });
         }
-      }
+      }*/
     },
 
     correo: {
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
           args: true,
           msg: 'Correo invalido, revise nuevamente'
         },
-        isUnique: function (value, next) {
+        /*isUnique: function (value, next) {
           var self = this;
           Alumno.findOne({where: {correo: value}})
           .then(function (user) {
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
           .catch(function (err) {
               return next(err);
           });
-        }
+        }*/
       }
     }
   },{freezeTableName: true});
@@ -51,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
       as: 'pruebas',
       onDelete: 'CASCADE',
     });
+    /*Alumno.hasMany(models.CursoInscrito, {
+      foreignKey: 'alumnoId',
+      as: 'cursos-inscritos',
+      onDelete: 'CASCADE',
+    });*/
   };
   return Alumno;
 };

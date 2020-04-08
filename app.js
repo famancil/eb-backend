@@ -8,6 +8,7 @@ var cors = require('cors')
 var indexRouter = require('./routes/index');
 var alumnosRouter = require('./routes/alumnos');
 var cursosRouter = require('./routes/cursos');
+var cursoInscritosRouter = require('./routes/cursoinscritos');
 var profesoresRouter = require('./routes/profesores');
 var pruebasRouter = require('./routes/pruebas');
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/alumnos', alumnosRouter);
 app.use('/cursos', cursosRouter);
+app.use('/cursoInscritos', cursoInscritosRouter);
 app.use('/profesores', profesoresRouter);
 app.use('/pruebas', pruebasRouter);
 
